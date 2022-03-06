@@ -18,7 +18,9 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "action/RunAction.action"
-  "srv/Action.srv")
+  "msg/Actions.msg"
+  "srv/GetActions.srv"
+  "srv/SaveActions.srv")
 
 ament_export_dependencies(rosidl_default_runtime)
 ament_package()
