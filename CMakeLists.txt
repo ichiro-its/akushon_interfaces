@@ -21,7 +21,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Actions.msg"
   "msg/Joint.msg"
   "srv/GetActions.srv"
-  "srv/PlayAction.srv"
+  "srv/RunAction.srv"
   "srv/RunPose.srv"
   "srv/SaveActions.srv")
 
