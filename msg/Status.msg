@@ -1,1 +1,1 @@
-bool status false
+bool is_running false
