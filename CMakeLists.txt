@@ -17,9 +17,9 @@ find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/Actions.msg"
+  "msg/RunAction.msg"
+  "msg/Status.msg"
   "srv/GetActions.srv"
-  "srv/RunAction.srv"
   "srv/SaveActions.srv")
 
 ament_export_dependencies(rosidl_default_runtime)
