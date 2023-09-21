@@ -7,7 +7,9 @@ service Config {
 
   rpc SaveConfig (ConfigActions) returns (Empty) {}
 
-  rpc publishSetJoints (SetJointsData) returns (Empty) {}
+  rpc PublishSetJoints (SetJointsData) returns (Empty) {}
+
+  rpc RunAction (ConfigRunAction) returns (Empty) {}
 }
 
 message Empty {}
@@ -19,4 +21,10 @@ message ConfigActions {
 message SetJointsData {
   int32 control_type = 1;
   string joints_data = 2;
+}
+
+message ConfigRunAction {
+  int32 control_type = 1;
+  string action_name = 2;
+  string json_action = 3;
 }
