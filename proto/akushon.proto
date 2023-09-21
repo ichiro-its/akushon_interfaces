@@ -6,10 +6,17 @@ service Config {
   rpc GetConfig (Empty) returns (ConfigActions) {}
 
   rpc SaveConfig (ConfigActions) returns (Empty) {}
+
+  rpc publishSetJoints (SetJointsData) returns (Empty) {}
 }
 
 message Empty {}
 
 message ConfigActions {
   string json_actions = 1;
+}
+
+message SetJointsData {
+  int32 control_type = 1;
+  string joints_data = 2;
 }
