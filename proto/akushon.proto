@@ -12,6 +12,8 @@ service Config {
   rpc RunAction (ConfigRunAction) returns (Empty) {}
 
   rpc PublishSetTorques (SetTorquesData) returns (Empty) {}
+
+  rpc SubscribeCurrentJoints (CurrentJoints) returns (Empty) {}
 }
 
 message Empty {}
@@ -34,4 +36,8 @@ message ConfigRunAction {
 message SetTorquesData {
   string ids = 1;
   bool torque_enable = 2;
+}
+
+message CurrentJoints {
+  string msg_joints = 1;
 }
