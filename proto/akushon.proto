@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package akushon_interfaces.proto;
+
+service Config {
+  rpc GetConfig (Empty) returns (ConfigActions) {}
+
+  rpc SaveConfig (ConfigActions) returns (Empty) {}
+}
+
+message Empty {}
+
+message ConfigActions {
+  string json_actions = 1;
+}
