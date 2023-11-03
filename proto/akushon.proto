@@ -41,4 +41,3 @@ message SetTorquesData {
 message CurrentJoints {
   string msg_joints = 1;
 }
-
