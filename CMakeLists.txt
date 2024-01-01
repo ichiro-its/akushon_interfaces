@@ -6,9 +6,8 @@ if(NOT CMAKE_C_STANDARD)
 endif()
 
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD 14)
 endif()
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC" )
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -23,17 +22,9 @@ message(STATUS "Using protobuf ${Protobuf_VERSION}")
 
 set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
 set(_REFLECTION gRPC::grpc++_reflection)
-set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
 
 find_package(gRPC CONFIG REQUIRED)
 message(STATUS "Using gRPC ${gRPC_VERSION}")
-
-set(_GRPC_GRPCPP gRPC::grpc++)
-set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
-
-# Proto file
-get_filename_component(akushon_proto "./proto/akushon.proto" ABSOLUTE)
-get_filename_component(akushon_proto_path "${akushon_proto}" PATH)
 
 # Generated sources
 add_custom_command(
@@ -41,13 +32,13 @@ add_custom_command(
             "${CMAKE_CURRENT_BINARY_DIR}/akushon.pb.h"
             "${CMAKE_CURRENT_BINARY_DIR}/akushon.grpc.pb.cc"
             "${CMAKE_CURRENT_BINARY_DIR}/akushon.grpc.pb.h"
-      COMMAND ${_PROTOBUF_PROTOC}
+      COMMAND $<TARGET_FILE:protobuf::protoc>
       ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
         --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
-        -I "${akushon_proto_path}"
-        --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-        "${akushon_proto}"
-      DEPENDS "${akushon_proto}")
+        -I ${CMAKE_CURRENT_SOURCE_DIR}/proto
+        --plugin=protoc-gen-grpc=$<TARGET_FILE:gRPC::grpc_cpp_plugin>
+        ${CMAKE_CURRENT_SOURCE_DIR}/proto/akushon.proto
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/proto/akushon.proto)
 
 add_library(akushon_proto
     ${CMAKE_CURRENT_BINARY_DIR}/akushon.pb.cc
@@ -55,10 +46,11 @@ add_library(akushon_proto
     ${CMAKE_CURRENT_BINARY_DIR}/akushon.grpc.pb.cc
     ${CMAKE_CURRENT_BINARY_DIR}/akushon.grpc.pb.h)
 
+target_compile_options(akushon_proto PRIVATE -fPIC)
+set_property(TARGET akushon_proto PROPERTY CXX_STANDARD 17)
+
 target_link_libraries(akushon_proto
-  # ${_REFLECTION}
-  # ${_GRPC_GRPCPP}
-  ${_PROTOBUF_LIBPROTOBUF}
+  protobuf::libprotobuf
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
