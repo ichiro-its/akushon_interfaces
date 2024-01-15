@@ -20,34 +20,32 @@ set(protobuf_MODULE_COMPATIBLE TRUE)
 find_package(Protobuf CONFIG REQUIRED)
 message(STATUS "Using protobuf ${Protobuf_VERSION}")
 
-set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
-set(_REFLECTION gRPC::grpc++_reflection)
-
 find_package(gRPC CONFIG REQUIRED)
 message(STATUS "Using gRPC ${gRPC_VERSION}")
 
 # Generated sources
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/proto)
 add_custom_command(
-      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/akushon.pb.cc" 
-            "${CMAKE_CURRENT_BINARY_DIR}/akushon.pb.h"
-            "${CMAKE_CURRENT_BINARY_DIR}/akushon.grpc.pb.cc"
-            "${CMAKE_CURRENT_BINARY_DIR}/akushon.grpc.pb.h"
+      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/proto/akushon.pb.cc" 
+            "${CMAKE_CURRENT_BINARY_DIR}/proto/akushon.pb.h"
+            "${CMAKE_CURRENT_BINARY_DIR}/proto/akushon.grpc.pb.cc"
+            "${CMAKE_CURRENT_BINARY_DIR}/proto/akushon.grpc.pb.h"
       COMMAND $<TARGET_FILE:protobuf::protoc>
-      ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
-        --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
+      ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}/proto"
+        --cpp_out "${CMAKE_CURRENT_BINARY_DIR}/proto"
         -I ${CMAKE_CURRENT_SOURCE_DIR}/proto
         --plugin=protoc-gen-grpc=$<TARGET_FILE:gRPC::grpc_cpp_plugin>
         ${CMAKE_CURRENT_SOURCE_DIR}/proto/akushon.proto
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/proto/akushon.proto)
 
 add_library(akushon_proto
-    ${CMAKE_CURRENT_BINARY_DIR}/akushon.pb.cc
-    ${CMAKE_CURRENT_BINARY_DIR}/akushon.pb.h
-    ${CMAKE_CURRENT_BINARY_DIR}/akushon.grpc.pb.cc
-    ${CMAKE_CURRENT_BINARY_DIR}/akushon.grpc.pb.h)
+    ${CMAKE_CURRENT_BINARY_DIR}/proto/akushon.pb.cc
+    ${CMAKE_CURRENT_BINARY_DIR}/proto/akushon.pb.h
+    ${CMAKE_CURRENT_BINARY_DIR}/proto/akushon.grpc.pb.cc
+    ${CMAKE_CURRENT_BINARY_DIR}/proto/akushon.grpc.pb.h)
 
 target_compile_options(akushon_proto PRIVATE -fPIC)
-set_property(TARGET akushon_proto PROPERTY CXX_STANDARD 17)
+target_compile_features(akushon_proto PUBLIC cxx_std_17)
 
 target_link_libraries(akushon_proto
   protobuf::libprotobuf
@@ -63,8 +61,8 @@ ament_export_dependencies(rosidl_default_runtime)
 ament_export_targets(akushon_proto HAS_LIBRARY_TARGET)
 
 install (
-  DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  DESTINATION include
+  DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/proto/
+  DESTINATION include/${PROJECT_NAME}
 )
 
 install (
