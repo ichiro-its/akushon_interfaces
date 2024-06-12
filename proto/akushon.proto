@@ -14,12 +14,14 @@ service Config {
   rpc SetTorques (SetTorquesData) returns (Empty) {}
 
   rpc SubscribeCurrentJoints (Empty) returns (CurrentJoints) {}
+
+  rpc LoadConfig (Empty) returns (Empty) {}
 }
 
 message Empty {}
 
 message ConfigActions {
-  string json_actions = 1;  
+  string json_actions = 1;
 }
 
 message SetJointsData {
