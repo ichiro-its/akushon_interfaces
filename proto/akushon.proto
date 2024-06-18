@@ -16,6 +16,8 @@ service Config {
   rpc SubscribeCurrentJoints (Empty) returns (CurrentJoints) {}
 
   rpc LoadConfig (Empty) returns (Empty) {}
+
+  rpc BrakeAction (Empty) returns (Empty) {}
 }
 
 message Empty {}
